@@ -1,3 +1,2 @@
-print("algo")
-print('Otra cosa')
-print(982339)
+from cmu_graphics import *
+
