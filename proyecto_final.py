@@ -6,6 +6,7 @@ sol = Estrella(200,0,100,100, relleno=gradiente('oro', 'amarillo', 'caqui'))
 
 def dibujarEscenaDeCiudad():
     sol.alFrente()
+    suelo.relleno = gradiente('gris', 'gainsboro', inicio='inferior')
     Rect(-20,320,440,80, relleno='grisOscuro', borde='gris', anchuraDeBorde=5)
     Linea(0,360,410,360, relleno=gradiente('negro', 'grisOscuro', 'negro'), anchuraDeLinea=4, guion=(5,6))
 dibujarEscenaDeCiudad()
