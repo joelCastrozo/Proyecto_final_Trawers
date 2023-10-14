@@ -275,7 +275,7 @@ def enTeclaPresionada(tecla):
     elif tecla == 'f':
         dibujarRio(False, True)
     elif tecla == 'g':
-        
+        pass
 
 def cenizas_en_el_aire():
     if app.probarFuego == True:
@@ -318,6 +318,7 @@ def enPaso():
         cenizas.agregar(cenizas_en_el_aire())
         cenizas.centroY += 5
     
-titulo = Rotulo('Comprende los problemas que nos destruyen', 200,200, relleno='negro', tamaño=16, anchuraDeBorde=4)
+titulo = Rotulo('Comprende los problemas que nos destruyen', 200,90, relleno='negro', tamaño=16, anchuraDeBorde=4)
+titulo = Rotulo('nuestro planeta', 200,210, relleno='negro', tamaño=16, anchuraDeBorde=4)
 
 cmu_graphics.run()
