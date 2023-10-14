@@ -21,5 +21,3 @@ Poligono(275,150, 298,162, 260,190, 283,164,273,159, relleno=gradiente('durazno'
 Poligono(225,150, 185,165, 225,159, relleno=gradiente('durazno', 'mocasin', inicio='derecha'))
 
 
-Poligono(186,392, 185,337, 205,357, 226,371, 210,384, relleno=gradiente('naranjaMarron','tierra', inicio='superior'))
-Poligono(203,328, 198,276, 209,300, 228,314, relleno=gradiente('naranjaMarron','tierra', inicio='superior'))

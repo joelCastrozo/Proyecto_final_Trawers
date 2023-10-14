@@ -21,6 +21,7 @@ def crearAutos(color, partida, direccion):
     
 carro_2 = crearAutos(gradiente('azulReal', 'azulGandul', inicio='inferior'), 440, 320)
 carro_3 = crearAutos(gradiente('violetaRojoMedio', 'violeta', inicio='inferior'), 540, 320)
+carro_6 = crearAutos(gradiente('fucsia', 'rosado', inicio='inferior'), 690, 320)
 carro_1 = crearAutos(gradiente('verde', 'limaVerde', inicio='inferior'), -40, 360)
 carro_4 = crearAutos(gradiente('rojo', 'carmesi', inicio='inferior'), -140, 360)
 carro_5 = crearAutos(gradiente('naranja', 'oro', inicio='inferior'), -240, 360)
@@ -32,5 +33,6 @@ def enPaso():
     carro_3.centroX -= 4
     carro_4.centroX += 8
     carro_5.centroX += 2
+    carro_6.centroX -= 3
 
 cmu_graphics.run()

@@ -163,29 +163,19 @@ app.cenizas_totales = 0
 app.probarFuego = False
 esBosque = False
 # Escena 3 - Rio contaminado
-fotoDePezMuerto = Grupo(
-        Rect(0,0,400,400, relleno=gradiente('grisTurbio','azulMediaNoche','grisTurbio', inicio='derecha')),
-        Ovalo(90,210,200,150,relleno=gradiente('gris','grisTurbio', inicio='izquierda')),
-        Ovalo(120,150,160,190,relleno=gradiente('gris','grisTurbio', inicio='inferior')),
-        Ovalo(230,160,150,150,relleno=gradiente('gris','grisTurbio', inicio='inferior')),
-        Ovalo(300,210,150,110,relleno=gradiente('gris','grisTurbio', inicio='izquierda')),
+app.contadorDeBasuraDeRio = 0
+def dibujarBasuraDeRio():
+    while app.contadorDeBasuraDeRio < 35:
+        app.contadorDeBasuraDeRio += 1
+        centroX_de_basuraDeRio, centroY_de_basuraDeRio = random.randint(40,165), random.randint(260,390)
+        cantidad = random.randint(3,7)
+        Estrella(centroX_de_basuraDeRio-9, centroY_de_basuraDeRio+5, 3, cantidad, relleno='verde')
+        Rect(centroX_de_basuraDeRio+18, centroY_de_basuraDeRio-4, 3, 13, relleno='marVerdeOscuro')
+        Ovalo(centroX_de_basuraDeRio+30, centroY_de_basuraDeRio+3, 2, 4, relleno=gradiente('gris', 'verdeOscuro'))
 
-        Poligono(122,193, 143,172, 168,157, 200,146, 236,149, 240,165, 245,191, 
-        246,214, 245,233, 221,238, 200,240, 179,232, 158,222, 137,208, 123,194, relleno=gradiente('plateado','azulAceroClaro', inicio='superior'), borde='negro'),
-        Poligono (106,216, 122,193, 137,208, 158,222, 179,232,200,240,
-        176,238, 151,234, 127,225, 106,216, relleno='azulAceroClaro', borde='negro'),
-
-        Ovalo(120,270,160,110,relleno=gradiente('gris','grisTurbio', inicio='superior')),
-        Ovalo(230,280,165,110,relleno=gradiente('gris','grisTurbio', inicio='superior')),
-
-        Poligono(199,186,214,170,221,193,220,200,210,205,204,202,199,186, relleno='coralClaro'),
-        Linea (236,149,199,186), Linea (151,199,190,193),
-        Linea (173,177,171,211), Linea (207,177,211,192)
-        )   
-fotoDePezMuerto.visible = False
 def dibujarRio(estáContaminado, estáLimpio):
     Rect(0,0,400,400, relleno = gradiente ('cianClaro','azur', inicio='inferior'))
-    Rect(0,250,250,150, relleno=gradiente('azulCieloClaro','azulCieloClaro','azulCieloProfundo','azulGandul','azulReal', inicio='superior'))
+    rio = Rect(0,250,250,150, relleno=gradiente('azulCieloClaro','azulCieloClaro','azulCieloProfundo','azulGandul','azulReal', inicio='superior'))
     Poligono(165,400, 210,384, 226,371, 205,357, 185,337, 228,314, 209,300, 198,276, 203,262, 189,248, 201,229, 224,225, 289,231, 351,236,
     400,250, 400, 400, relleno=gradiente('limaVerde','verdeBosque','verde','marVerde', inicio='izquierda-superior'))
     Rect(240,100,20,20, relleno=gradiente('durazno', 'mocasin', inicio='izquierda'))
@@ -208,14 +198,12 @@ def dibujarRio(estáContaminado, estáLimpio):
     Poligono(186,392, 185,337, 205,357, 226,371, 210,384, relleno=gradiente('naranjaMarron','tierra', inicio='superior'))
     Poligono(203,328, 198,276, 209,300, 228,314, relleno=gradiente('naranjaMarron','tierra', inicio='superior'))
 
-    if estáContaminado == True:
-        fotoDePezMuerto.ancho, fotoDePezMuerto.altura = 100, 100
-        fotoDePezMuerto.izquierda, fotoDePezMuerto.superior, fotoDePezMuerto.rotarAngulo = 90, 275, 5
-        fotoDePezMuerto.alFrente()
-        fotoDePezMuerto.visible = True
+    if estáContaminado == True: 
+        dibujarBasuraDeRio()
     if estáLimpio == True:
         cubeta.visible = False
-        
+        rio.alFrente()
+
 # Escena 4 - Soluciones
 def dibujarReunion():
     Rect(0,0,400,400, relleno=gradiente('blanco', 'gris', 'blanco'))
@@ -323,6 +311,8 @@ def enTeclaPresionada(tecla):
         dibujarRio(False, True)
     elif tecla == 'g':
         dibujarJuego()
+    elif tecla == 'h':
+        pass
 
 def cenizas_en_el_aire():
     if app.probarFuego == True:
@@ -375,6 +365,7 @@ def enPaso():
 titulo = Rotulo('Comprende los problemas que nos destruyen', 200,190, relleno='rojo', tamaño=16, anchuraDeBorde=6)
 subtitulo = Rotulo('nuestro planeta', 200,210, relleno='rojo', tamaño=16, anchuraDeBorde=6)
 indicacion = Rotulo('Presiona teclas en orden alfabetico de a hasta g', 200,380, relleno='negro', tamaño=16, anchuraDeBorde=4)
+
 """
 Tenemos serios problemas de creatividad, pero está bien, somos insanos
 """
