@@ -7,6 +7,8 @@ import random
 # Elementos para todas las escenas
 app.fondo = 'azulCieloProfundo'
 sol = Estrella(200,0,100,100, relleno=None)
+nube1 = Grupo(Circulo(45,45,25, relleno='blanco'),Circulo(80,45,25, relleno='blanco'),Circulo(115,45,25, relleno='blanco'))
+nube2 = Grupo(Circulo(245,60,20, relleno='blanco'),Circulo(270,60,20, relleno='blanco'),Circulo(295,60,20, relleno='blanco'))
 suelo = Rect(0,260,400,140, relleno='azulCieloProfundo')
 time.sleep(3)
 # Escena 01 - La ciudad, principal medio de destrucción
@@ -110,6 +112,8 @@ def crearEscenaDelBosque(estáSembrado, estáArdiendo, estáSeco, estáCrecido):
         Rect(0,0,400,400, relleno=gradiente('azulCielo', 'azulCielo', 'verde', inicio='superior'))
         sol.alFrente()
         sol.relleno=gradiente('oro','amarillo','caqui')
+        nube1.relleno = 'blanco'
+        nube2.relleno = 'blanco'
         suelo.alFrente()
         Rect(230,280,40,70, relleno=gradiente('salmonClaro', 'tierra', 'salmonOscuro', inicio='superior'), borde='negro')
         Rect(280,280,40,70, relleno=gradiente('salmonClaro', 'tierra', 'salmonOscuro', inicio='superior'), borde='negro')
@@ -120,10 +124,14 @@ def crearEscenaDelBosque(estáSembrado, estáArdiendo, estáSeco, estáCrecido):
         dibujarBrotes(350,290), dibujarBrotes(350,310), dibujarBrotes(350,330), dibujarBrotes(350,370)
         dibujarBrotes(270,380), dibujarBrotes(330,380)
     if estáArdiendo == True:
+        nube1.relleno = 'gris'
+        nube2.relleno = 'gris'
         suelo.relleno = gradiente('gris', 'naranja', 'gainsboro', inicio='inferior')
         carretera.relleno = 'grisOscuro'
         sol.relleno=gradiente('naranja', 'naranjaOscuro', 'tomate', 'carmesi')
     if estáSeco == True:
+        nube1.relleno = 'grisOscuro'
+        nube2.relleno = 'grisOscuro'
         Rect(0,0,400,400, relleno=gradiente('azulCielo', 'azulCielo', 'verde', inicio='superior'))
         sol.alFrente()
         sol.relleno=gradiente('amarillo', 'oro', 'naranja', 'carmesi', 'rojo')
@@ -135,6 +143,8 @@ def crearEscenaDelBosque(estáSembrado, estáArdiendo, estáSeco, estáCrecido):
             app.cuentaDeArbolesSecos += 1
             dibujarArbolesSecos(posicion_x_de_arbol,posicion_y_de_arbol)
     if estáCrecido == True:
+        nube1.relleno = 'gainsboro'
+        nube1.relleno = 'gainsboro'
         sol.alFrente()
         Rect(0,0,400,400, relleno=gradiente('azulCielo', 'azulCielo', 'verde', inicio='superior'))
         sol.relleno = gradiente('oro', 'amarillo', 'caqui')
@@ -249,7 +259,42 @@ def dibujarIntegrantes(x,y, color):
     Linea(x,y-15,x,y+95,relleno=color,anchuraDeLinea=40),
     Ovalo(x,y,45,80,relleno=color),
     Circulo(x,y-55,20, relleno="durazno")
-
+macetero = Poligono(220,280,260,240,380,240,340,280, relleno='tierra', borde='granate',anchuraDeBorde=5, visible = False)
+semilla = Ovalo(80,240,35,15, relleno='chocolate', visible = False)
+arbol = Grupo(Linea(300,200,300,265, relleno='madera',anchuraDeLinea=10), Circulo(297,185,20,relleno='verdeOscuro'),
+            Circulo(311,177,20,relleno='verdeOscuro'),Circulo(315,205,10,relleno='verdeOscuro'),Circulo(289,205,10,relleno='verdeOscuro'),
+            Circulo(280,182,15,relleno='verdeOscuro'))
+arbol.visible = False
+agua = Poligono(200,35,190,55,190,60,200,66,210,60,210,55, relleno='agua', visible = False)
+def dibujarJuego():
+    Rect(0,0,400,400, relleno='azulCielo')
+    Rect(0,220,400,200,relleno='verdeBosque')
+    nube1.alFrente()
+    nube2.alFrente()
+    macetero.visible = True
+    semilla.visible = True
+    agua.visible = True
+    Rotulo('Mueva la semilla hacia el macetero', 200, 33)
+    Rotulo('Planta una planta en la plantadera para hacer crecer la planta', 200,350)
+def enRatónArrastrado(ratónX, ratónY):
+    if semilla.contiene(ratónX, ratónY):
+        semilla.centroX = ratónX
+        semilla.centroY = ratónY
+    elif agua.contiene(ratónX, ratónY):
+        agua.centroX = ratónX
+        agua.centroY = ratónY
+    if agua.tocaFigura(arbol):
+        if arbol.altura < 160: 
+            arbol.inferior -= 4
+            arbol.altura += 5
+            arbol.ancho += 1
+def enRatónSoltado(ratónX, ratónY):
+    if semilla.tocaFigura(macetero):
+       semilla.visible = False
+       arbol.visible = True
+    if arbol.visible == True:
+       agua.visible = True
+    
 def enTeclaPresionada(tecla):
     if tecla == 'espacio':
         crearEscenaDelBosque(False, True, False, False)
@@ -277,7 +322,7 @@ def enTeclaPresionada(tecla):
     elif tecla == 'f':
         dibujarRio(False, True)
     elif tecla == 'g':
-        pass
+        dibujarJuego()
 
 def cenizas_en_el_aire():
     if app.probarFuego == True:
@@ -319,8 +364,16 @@ def enPaso():
     if app.probarFuego == True:
         cenizas.agregar(cenizas_en_el_aire())
         cenizas.centroY += 5
+    # Escena final
+    nube1.centroX += 3
+    nube2.centroX -= 3
+    if nube1.centroX > 450:
+        nube1.centroX = -20
+    if nube2.centroX < -20:
+        nube2.centroX = 450
     
-titulo = Rotulo('Comprende los problemas que nos destruyen', 200,90, relleno='negro', tamaño=16, anchuraDeBorde=4)
-titulo = Rotulo('nuestro planeta', 200,210, relleno='negro', tamaño=16, anchuraDeBorde=4)
+titulo = Rotulo('Comprende los problemas que nos destruyen', 200,190, relleno='rojo', tamaño=16, anchuraDeBorde=6)
+subtitulo = Rotulo('nuestro planeta', 200,210, relleno='rojo', tamaño=16, anchuraDeBorde=6)
+indicacion = Rotulo('Presiona teclas en orden alfabetico de a hasta g', 200,380, relleno='negro', tamaño=16, anchuraDeBorde=4)
 
 cmu_graphics.run()
