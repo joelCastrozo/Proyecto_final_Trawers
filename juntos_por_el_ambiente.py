@@ -375,5 +375,8 @@ def enPaso():
 titulo = Rotulo('Comprende los problemas que nos destruyen', 200,190, relleno='rojo', tamaño=16, anchuraDeBorde=6)
 subtitulo = Rotulo('nuestro planeta', 200,210, relleno='rojo', tamaño=16, anchuraDeBorde=6)
 indicacion = Rotulo('Presiona teclas en orden alfabetico de a hasta g', 200,380, relleno='negro', tamaño=16, anchuraDeBorde=4)
+"""
+Tenemos serios problemas de creatividad, pero está bien, somos insanos
+"""
 
 cmu_graphics.run()
