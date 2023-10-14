@@ -274,7 +274,7 @@ def dibujarTienda():
         Linea(100,186,192,186,relleno='durazno'),
         Rect(100,147,91,85,relleno=None,borde='Durazno',anchuraDeBorde=5),
         Linea(207,204,218,204 ,relleno='marron'))
-    Rect(0,280,400,120, relleno='verde')
+            
     crearArboles(345,285)
 
 macetero = Poligono(220,280,260,240,380,240,340,280, relleno='tierra', borde='granate',anchuraDeBorde=5, visible = False)
