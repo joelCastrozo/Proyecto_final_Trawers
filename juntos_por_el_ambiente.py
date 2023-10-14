@@ -87,16 +87,28 @@ def dibujarBrotes(x,y):
     Linea(x,y,x+3,y-10, relleno=gradiente('verde', 'verdeBosque', inicio='superior'))
     Ovalo(x,y,10,6, relleno='tierra')
     
-app.cuentaDeArboles = 0
-def crearArboles(x,y):
+app.cuentaDeArbolesSecos = 0
+app.cuentaDeArbolesVerdes = 0
+def crearArboles(x, y):
     Árbol = Group(
-            )
+            Circle (x+5,y-43,15, relleno='verde'),
+            Circle (x+30,y-43,15, relleno='verde'),
+            Circle (x+20,y+19,15, relleno='verde'),
+            Circle (x+7,y+19,15, relleno='verde'),
+            Circle (x-23,y,25, relleno=gradiente('verde', 'limaVerde', inicio='izquierda')),
+            Circle (x-23,y,25, relleno=gradiente('verde', 'limaVerde', inicio='derecha')),
+            Rect (x-8,y+7,16,80, relleno=gradiente('tierra','granate', inicio='superior')),
+            Óvalo(x,y+85,15,10, relleno='granate'),
+            Circle (x,y+7,25, relleno='verdeBosque')
+    )
 
 def crearEscenaDelBosque(estáSembrado, estáArdiendo, estáSeco, estáCrecido):
     sol.alFrente()
     suelo.relleno = gradiente('verdeBosque', 'verde', inicio='inferior')
     carretera.visible = False
     if estáSembrado == True:
+        Rect(0,0,400,400, relleno=gradiente('azulCielo', 'azulCielo', 'verde', inicio='superior'))
+        sol.alFrente()
         suelo.alFrente()
         Rect(230,280,40,70, relleno=gradiente('salmonClaro', 'tierra', 'salmonOscuro', inicio='superior'), borde='negro')
         Rect(280,280,40,70, relleno=gradiente('salmonClaro', 'tierra', 'salmonOscuro', inicio='superior'), borde='negro')
@@ -115,20 +127,23 @@ def crearEscenaDelBosque(estáSembrado, estáArdiendo, estáSeco, estáCrecido):
         sol.alFrente()
         suelo.relleno = gradiente('salmonClaro', 'negro', 'salmonClaro', 'negro', inicio='superior')
         suelo.alFrente()
-        while app.cuentaDeArboles < 99:
+        while app.cuentaDeArbolesSecos < 99:
             posicion_x_de_arbol = random.randint(10,390)
             posicion_y_de_arbol = random.randint(320,385)
-            app.cuentaDeArboles += 1
+            app.cuentaDeArbolesSecos += 1
             dibujarArbolesSecos(posicion_x_de_arbol,posicion_y_de_arbol)
     if estáCrecido == True:
+        sol.alFrente()
+        Rect(0,0,400,400, relleno=gradiente('azulCielo', 'azulCielo', 'verde', inicio='superior'))
         sol.relleno = gradiente('oro', 'amarillo', 'caqui')
         suelo.alFrente()
         suelo.relleno = 'verdeBosque'
+        sol.relleno=gradiente('oro', 'amarillo', 'amarillo', 'rojo', 'rojo', 'amarillo')
         app.cuentas = 0
-        while app.cuentaDeArboles < 99:
+        while app.cuentaDeArbolesVerdes < 99:
             posicion_x_de_arbol_2 = random.randint(20,380)
             posicion_y_de_arbol_2 = random.randint(260,385)
-            app.cuentaDeArboles += 1
+            app.cuentaDeArbolesVerdes += 1
             crearArboles(posicion_x_de_arbol_2,posicion_y_de_arbol_2)
 
 cenizas = Group()
@@ -206,16 +221,16 @@ def dibujarIntegrantes(x,y, color):
 def enTeclaPresionada(tecla):
     if tecla == 'espacio':
         crearEscenaDelBosque(False, True, False, False)
-    elif tecla == 'derecha':
+    elif tecla == 'a':
         crearEscenaDelBosque(False, False, False, True)
         sol.alFrente()
-    if tecla == 'shift':
+    elif tecla == 'b':
         esBosque = True
         if esBosque == True:
-            crearEscenaDelBosque(False, True, True, False)
+            crearEscenaDelBosque(False, False, True, False)
             cenizas.alFrente()
             app.probarFuego = True
-    elif tecla == 'arriba':
+    elif tecla == 'd':
         dibujarReunion()
         dibujarIntegrantes(80, 340, 'indigo')
         dibujarIntegrantes(140, 340, 'limaVerde')
@@ -223,8 +238,9 @@ def enTeclaPresionada(tecla):
         dibujarIntegrantes(240, 340, 'oro')
         dibujarIntegrantes(280, 340, 'caquiOscuro')
         dibujarIntegrantes(340, 340, 'granate')
-        dibujarIntegrantes(380, 340, 'granate')
-    elif tecla == 'abajo':
+    elif tecla == 'e':
+        crearEscenaDelBosque(True, False, False, False)
+    elif tecla == 'f':
         crearEscenaDelBosque(False, False, False, True)
 
 def cenizas_en_el_aire():
