@@ -103,7 +103,13 @@ def crearArboles(x, y):
             Óvalo(x,y+85,15,10, relleno='granate'),
             Circle (x,y+7,25, relleno='verdeBosque')
     )
-
+def arbolario():
+    while app.cuentaDeArbolesVerdes < 99:
+        posicion_x_de_arbol_2 = random.randint(20,380)
+        posicion_y_de_arbol_2 = random.randint(260,385)
+        app.cuentaDeArbolesVerdes += 1
+        arbol = crearArboles(posicion_x_de_arbol_2,posicion_y_de_arbol_2)
+    return arbol
 def crearEscenaDelBosque(estáSembrado, estáArdiendo, estáSeco, estáCrecido):
     sol.alFrente()
     suelo.relleno = gradiente('verdeBosque', 'verde', inicio='inferior')
@@ -152,11 +158,7 @@ def crearEscenaDelBosque(estáSembrado, estáArdiendo, estáSeco, estáCrecido):
         suelo.relleno = 'verdeBosque'
         sol.relleno=gradiente('amarillo', 'oro', 'naranja', 'carmesi')
         app.cuentas = 0
-        while app.cuentaDeArbolesVerdes < 99:
-            posicion_x_de_arbol_2 = random.randint(20,380)
-            posicion_y_de_arbol_2 = random.randint(260,385)
-            app.cuentaDeArbolesVerdes += 1
-            crearArboles(posicion_x_de_arbol_2,posicion_y_de_arbol_2)
+        arbol = arbolario()
 
 cenizas = Group()
 app.cenizas_totales = 0
@@ -164,14 +166,20 @@ app.probarFuego = False
 esBosque = False
 # Escena 3 - Rio contaminado
 app.contadorDeBasuraDeRio = 0
+
 def dibujarBasuraDeRio():
     while app.contadorDeBasuraDeRio < 35:
         app.contadorDeBasuraDeRio += 1
         centroX_de_basuraDeRio, centroY_de_basuraDeRio = random.randint(40,165), random.randint(260,390)
         cantidad = random.randint(3,7)
-        Estrella(centroX_de_basuraDeRio-9, centroY_de_basuraDeRio+5, 3, cantidad, relleno='verde')
-        Rect(centroX_de_basuraDeRio+18, centroY_de_basuraDeRio-4, 3, 13, relleno='marVerdeOscuro')
+        desechos = Grupo(
+        Estrella(centroX_de_basuraDeRio-9, centroY_de_basuraDeRio+5, 3, cantidad, relleno='verde'),
+        Rect(centroX_de_basuraDeRio+18, centroY_de_basuraDeRio-4, 3, 13, relleno='marVerdeOscuro'),
         Ovalo(centroX_de_basuraDeRio+30, centroY_de_basuraDeRio+3, 2, 4, relleno=gradiente('gris', 'verdeOscuro'))
+        )
+    return desechos
+
+basuraDeRio = Grupo()
 
 def dibujarRio(estáContaminado, estáLimpio):
     Rect(0,0,400,400, relleno = gradiente ('cianClaro','azur', inicio='inferior'))
@@ -199,13 +207,13 @@ def dibujarRio(estáContaminado, estáLimpio):
     Poligono(203,328, 198,276, 209,300, 228,314, relleno=gradiente('naranjaMarron','tierra', inicio='superior'))
 
     if estáContaminado == True: 
-        dibujarBasuraDeRio()
+        basuraDeRio.agregar(dibujarBasuraDeRio())
     if estáLimpio == True:
         cubeta.visible = False
-        rio.alFrente()
-
+        basuraDeRio.alFondo()
 # Escena 4 - Soluciones
 def dibujarReunion():
+
     Rect(0,0,400,400, relleno=gradiente('blanco', 'gris', 'blanco'))
     suelo.alFrente()
     suelo.relleno = gradiente('blanco', 'nieve')
@@ -247,6 +255,28 @@ def dibujarIntegrantes(x,y, color):
     Linea(x,y-15,x,y+95,relleno=color,anchuraDeLinea=40),
     Ovalo(x,y,45,80,relleno=color),
     Circulo(x,y-55,20, relleno="durazno")
+
+def dibujarTienda():
+    Rect(0,0,400,400, relleno=gradiente('azulCielo', 'azulCieloClaro'))
+    tienda = Grupo(
+        Rect(80,92,188,188,relleno='durazno'),
+        Rect(70,70,210,25,relleno='durazno',borde='caquiOscuro'),
+        Rect(93,103,165,165,relleno='coralClaro',borde='salmon'),
+        Rect(132,42,83,43,relleno='coralClaro',borde='salmon'),
+        Rotulo('Ecotienda',172,61,tamaño=12,negrito=True,fuente='cinzel',relleno='aguaMarinaMedio'),
+        Rect(73,249,203,31,relleno='ladrillo'),Linea(36,273,313,273,anchuraDeLinea=15,relleno='gris'),
+        Rect(200,147,50,121,relleno='durazno'),
+        Rect(208,156,36,40,relleno='azulAceroClaro',opacidad=90),
+        Rect(208,209,36,51,relleno='azulAceroClaro',opacidad=90),
+        Rect(100,147,91,83,relleno='azulAceroClaro',opacidad=90),
+        Linea(130,147,130,230,relleno='durazno'),
+        Linea(160,147,160,230,relleno='durazno'),
+        Linea(100,186,192,186,relleno='durazno'),
+        Rect(100,147,91,85,relleno=None,borde='Durazno',anchuraDeBorde=5),
+        Linea(207,204,218,204 ,relleno='marron'))
+    Rect(0,280,400,120, relleno='verde')
+    crearArboles(345,285)
+
 macetero = Poligono(220,280,260,240,380,240,340,280, relleno='tierra', borde='granate',anchuraDeBorde=5, visible = False)
 semilla = Ovalo(80,240,35,15, relleno='chocolate', visible = False)
 arbol = Grupo(Linea(300,200,300,265, relleno='madera',anchuraDeLinea=10), Circulo(297,185,20,relleno='verdeOscuro'),
@@ -284,20 +314,24 @@ def enRatónSoltado(ratónX, ratónY):
        agua.visible = True
     
 def enTeclaPresionada(tecla):
-    if tecla == 'espacio':
+    nube1.alFrente()
+    nube2.alFrente()
+    if tecla == 'a':
         crearEscenaDelBosque(False, True, False, False)
-    elif tecla == 'a':
+    elif tecla == 'b':
         crearEscenaDelBosque(False, False, False, True)
         sol.alFrente()
-    elif tecla == 'b':
+    elif tecla == 'c':
         esBosque = True
         if esBosque == True:
             crearEscenaDelBosque(False, False, True, False)
             cenizas.alFrente()
             app.probarFuego = True
-    elif tecla == 'c':
-        dibujarRio(True, False)
     elif tecla == 'd':
+        nube1.alFondo()
+        nube2.alFondo()
+        dibujarRio(True, False)
+    elif tecla == 'e':
         dibujarReunion()
         dibujarIntegrantes(80, 340, 'indigo')
         dibujarIntegrantes(140, 340, 'limaVerde')
@@ -305,14 +339,14 @@ def enTeclaPresionada(tecla):
         dibujarIntegrantes(240, 340, 'oro')
         dibujarIntegrantes(280, 340, 'caquiOscuro')
         dibujarIntegrantes(340, 340, 'granate')
-    elif tecla == 'e':
-        crearEscenaDelBosque(True, False, False, False)
     elif tecla == 'f':
-        dibujarRio(False, True)
+        crearEscenaDelBosque(True, False, False, False)
     elif tecla == 'g':
-        dibujarJuego()
+        dibujarRio(False, True)
     elif tecla == 'h':
-        pass
+        dibujarTienda()
+    elif tecla == 'i':
+        dibujarJuego()
 
 def cenizas_en_el_aire():
     if app.probarFuego == True:
@@ -364,10 +398,9 @@ def enPaso():
     
 titulo = Rotulo('Comprende los problemas que nos destruyen', 200,190, relleno='rojo', tamaño=16, anchuraDeBorde=6)
 subtitulo = Rotulo('nuestro planeta', 200,210, relleno='rojo', tamaño=16, anchuraDeBorde=6)
-indicacion = Rotulo('Presiona teclas en orden alfabetico de a hasta g', 200,380, relleno='negro', tamaño=16, anchuraDeBorde=4)
+indicacion = Rotulo('Presiona teclas en orden alfabetico de la a hasta la i', 200,380, relleno='negro', tamaño=16, anchuraDeBorde=4)
 
-"""
-Tenemos serios problemas de creatividad, pero está bien, somos insanos
-"""
+
+"""Tenemos serios problemas de creatividad, pero está bien, somos insanos"""
 
 cmu_graphics.run()
