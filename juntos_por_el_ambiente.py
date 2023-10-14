@@ -60,7 +60,7 @@ def dibujarBasura():
 
 def dibujarEscenaDeCiudad():
     app.fondo = gradiente('azulCieloProfundo','azulCieloClaro', inicio='superior')
-    sol.relleno = gradiente('oro', 'amarillo', 'caqui')
+    sol.relleno = gradiente('caqui', 'amarillo', 'oro')
     edificio_1 = dibujarEdificioAlto(20,110,'azulOscuro','grisTurbio')
     edificio_2 = dibujarEdificioAlto(180,110,'caquiOscuro','rojoOscuro')
     edificio_3 = dibujarEdificioAlto(330,110,'grisPizarraClaro','blanco')
@@ -109,6 +109,7 @@ def crearEscenaDelBosque(estáSembrado, estáArdiendo, estáSeco, estáCrecido):
     if estáSembrado == True:
         Rect(0,0,400,400, relleno=gradiente('azulCielo', 'azulCielo', 'verde', inicio='superior'))
         sol.alFrente()
+        sol.relleno=gradiente('oro','amarillo','caqui')
         suelo.alFrente()
         Rect(230,280,40,70, relleno=gradiente('salmonClaro', 'tierra', 'salmonOscuro', inicio='superior'), borde='negro')
         Rect(280,280,40,70, relleno=gradiente('salmonClaro', 'tierra', 'salmonOscuro', inicio='superior'), borde='negro')
@@ -121,10 +122,11 @@ def crearEscenaDelBosque(estáSembrado, estáArdiendo, estáSeco, estáCrecido):
     if estáArdiendo == True:
         suelo.relleno = gradiente('gris', 'naranja', 'gainsboro', inicio='inferior')
         carretera.relleno = 'grisOscuro'
-        sol.relleno=gradiente('oro', 'amarillo', 'amarillo', 'rojo', 'rojo', 'amarillo')
+        sol.relleno=gradiente('naranja', 'naranjaOscuro', 'tomate', 'carmesi')
     if estáSeco == True:
         Rect(0,0,400,400, relleno=gradiente('azulCielo', 'azulCielo', 'verde', inicio='superior'))
         sol.alFrente()
+        sol.relleno=gradiente('amarillo', 'oro', 'naranja', 'carmesi', 'rojo')
         suelo.relleno = gradiente('salmonClaro', 'negro', 'salmonClaro', 'negro', inicio='superior')
         suelo.alFrente()
         while app.cuentaDeArbolesSecos < 99:
@@ -138,7 +140,7 @@ def crearEscenaDelBosque(estáSembrado, estáArdiendo, estáSeco, estáCrecido):
         sol.relleno = gradiente('oro', 'amarillo', 'caqui')
         suelo.alFrente()
         suelo.relleno = 'verdeBosque'
-        sol.relleno=gradiente('oro', 'amarillo', 'amarillo', 'rojo', 'rojo', 'amarillo')
+        sol.relleno=gradiente('amarillo', 'oro', 'naranja', 'carmesi')
         app.cuentas = 0
         while app.cuentaDeArbolesVerdes < 99:
             posicion_x_de_arbol_2 = random.randint(20,380)
@@ -208,15 +210,15 @@ def dibujarReunion():
 
     Lider = Grupo(
         Linea(200,180,200,240,anchuraDeLinea=40,relleno='azulMedio'),
-        Linea(218,181,240,230,anchuraDeLinea=4),
+        Linea(218,181,240,230,anchuraDeLinea=4, relleno='mocasin'),
         Ovalo(200,200,45,80,relleno='azulMedio'),
-        Circulo(200,145,20),
-        Linea(181,181,145,145,anchuraDeLinea=4))   
+        Circulo(200,145,20, relleno='mocasin'),
+        Linea(181,181,145,145,anchuraDeLinea=4, relleno='mocasin'))   
     
 def dibujarIntegrantes(x,y, color):
     Linea(x,y-15,x,y+95,relleno=color,anchuraDeLinea=40),
     Ovalo(x,y,45,80,relleno=color),
-    Circulo(x,y-55,20)
+    Circulo(x,y-55,20, relleno="durazno")
 
 def enTeclaPresionada(tecla):
     if tecla == 'espacio':
