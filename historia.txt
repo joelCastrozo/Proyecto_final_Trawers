@@ -1,5 +1,4 @@
-Somos inconcientes a la hora de
-comer, ya que no nos importa la
-basura que tiramos al suelo y
-luego se va a los ríos o mares
-de nuestro entorno
+Rotulo('La contaminacion es la presencia de sustancias o agentes fisicos en el medio ambiente, 
+estos causan daños y alteraciones en los ecosistemas, la salud humana y el bienestar de los seres vivos.' )
+
+Rotulo('El calentamiento global producido)
