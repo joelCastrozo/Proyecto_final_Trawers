@@ -15,8 +15,9 @@ sol = Star(200,0,100,100, relleno = gradient('caqui', 'amarillo', 'oro'), visibl
 nube_1 = Group(Circle(45,45,25, relleno='blanco'), Circle(80,45,25, relleno='blanco'), Circle(115,45,25, relleno='blanco')) # Nube grande
 nube_2 = Group(Circle(245,60,20, relleno='blanco'), Circle(270,60,20, relleno='blanco'), Circle(295,60,20, relleno='blanco')) # Nube pequeña
 nube_1.visible, nube_2.visible = False, False # Modificación para ocultar las nubes en la pantalla del inicio
-suelo = Rect(0,260,400,140, relleno='azulCieloProfundo', visible = False) # Suelo de las escenas
-río = Polygon()
+suelo = Rect(0,260,400,140, relleno='azulCieloProfundo', visible = False) # Suelo de las escena
+río = Polygon(-10,400,-10,310,190,330,410,365,410,400,relleno=rgb(19,93,139), borde='gainsboro', visible = False)
+ola = Oval(220, 400, 700, 60, relleno=rgb(16,93,179), borde=rgb(12,113,161), rotarAngulo=6, opacidad=50, visible = False)
 
 # Para Escena 0 - Escena de introducción
 panelDeTexto = Rect(20,175,360,50, relleno=gradient('plateado', 'grisClaro'), borde='gris', anchuraDeBorde=2) # Fondo del titulo para evitar contraluz
@@ -222,13 +223,7 @@ escenaDeBosqueTalado = Group()
 ## Funciones de escena de río
 
 ### Dibujar el río
-def dibujarEscenaDelRío():
-    app.fondo = gradiente('azulCieloProfundo','azulCieloClaro', inicio='superior')
-    suelo = Rect(0,260,400,140, relleno=gradiente('gris', 'gainsboro', inicio='superior'))
-    sol = Estrella(200,0,100,100, relleno=gradiente('oro', 'amarillo', 'tierra'))
-    río = Polygon(-10,400,-10,310,190,330,410,365,410,400,relleno=rgb(19,93,139), borde='gainsboro')
-    ola = Óvalo(220, 400, 700, 60, relleno=rgb(16,93,179), borde=rgb(12,113,161), rotarAngulo=6, opacidad=50)
-    app.dirección = 0.3
+app.dirección = 0
 
 ## Grupo 6 - Escena contaminando río
 escenaContaminandoRío = Group()
@@ -263,7 +258,23 @@ def dibujarBrotes(x, y):
     dibujarBrotes(350,290), dibujarBrotes(350,310), dibujarBrotes(350,330), dibujarBrotes(350,370)
     dibujarBrotes(270,380), dibujarBrotes(330,380)
 
-# Grupo 9 - Escena del jardín
+### Función para dibujar arbustos
+def arbusto(x,y,ancho,altura,opacidad=100):
+    arbusto = Group(Circle(243,214,12,relleno=rgb(139,198,64)), Circle(259,191,17,relleno=rgb(139,198,64)),Circle(282,173,13,relleno=rgb(139,198,64)),
+    Circle(314,161,19,relleno=rgb(139,198,64)),Oval(338,176,22,26,rotarAngulo=10,relleno=rgb(139,198,64)),Circle(364,190,16,relleno=rgb(139,198,64)),
+    Oval(380,211,29,26, relleno=rgb(139,198,64)), Polygon(243,226,259,191,282,173,314,161,338,176,364,190,380,211,394,216,391,226,relleno=rgb(139,198,64)))
+    arbusto.centroX, arbusto.centroY, arbusto.ancho, arbusto.altura = x, y, ancho, altura
+    return arbusto
+
+### Grupo para arbustos
+arbustos = Group()
+arbustos.visible = False
+
+### Bucle para dibujar arbustos
+for i in range(5):
+    arbustos.agregar(arbusto(50 + i * 74, 280, 60, 40))
+
+#  Grupo 9 - Escena del jardín
 escenaDeJardín = Group()
 escenaDeJardín.visible = False
 
@@ -312,11 +323,19 @@ def enTeclaPresionada(tecla):
             escenaDeBosqueSeco.visible, app.estado, suelo.relleno = True, 'en escena bosque seco', gradient('gris', 'grisClaro', 'salmonClaro', inicio='inferior'),
             nube_1.relleno, nube_2.relleno = 'grisClaro', 'grisClaro'
         elif app.estado == 'en escena bosque seco': 
-            escenaDeBosqueQuemandose.vaciar(), escenaDeBosqueSeco.agregar(sol, nube_1, nube_2, suelo, arboles_secos)
-            escenaDeBosqueSeco.visible, app.estado, suelo.relleno = True, 'en escena bosque seco', gradient('gris', 'grisClaro', 'salmonClaro', inicio='inferior'),
+            escenaDeBosqueSeco.vaciar(), escenaDeBosqueTalado.agregar(sol, nube_1, nube_2, suelo)
+            escenaDeBosqueTalado.visible, app.estado, suelo.relleno = True, 'en escena bosque talado', gradient('gris', 'grisClaro', 'salmonClaro', inicio='inferior'),
+            nube_1.relleno, nube_2.relleno = 'grisClaro', 'grisClaro'
+        elif app.estado == 'en escena bosque talado': 
+            escenaDeBosqueTalado.vaciar(), escenaDeRioLimpio.agregar(sol, nube_1, nube_2, suelo, río, ola)
+            escenaDeRioLimpio.visible, app.estado, suelo.relleno = True, 'en escena río limpio', gradient('gris', 'grisClaro', 'gainsboro', inicio='inferior'),
+            nube_1.relleno, nube_2.relleno, app.dirección = 'grisClaro', 'grisClaro', 0.3
+        elif app.estado == 'en escena río limpio': 
+            escenaDeRioLimpio.vaciar(), escenaDeRíoContaminado.agregar(sol, nube_1, nube_2, suelo, río, ola)
+            escenaDeRíoContaminado.visible, app.estado, suelo.relleno = True, 'en escena de reunión', gradient('gris', 'grisClaro', 'gainsboro', inicio='inferior'),
             nube_1.relleno, nube_2.relleno = 'grisClaro', 'grisClaro'
         elif app.estado == 'en escena de reunión': 
-            escenaDeBosqueSeco.vaciar(), escenaDeJardín.agregar(sol, nube_1, nube_2, suelo)
+            escenaDeRíoContaminado.vaciar(), escenaDeJardín.agregar(sol, nube_1, nube_2, suelo, arbustos)
             escenaDeJardín.visible, app.estado, suelo.relleno = True, 'en escena jardín', gradient('verde', 'verdeBosque', 'azulCadete', inicio='inferior'),
             nube_1.relleno, nube_2.relleno = 'grisClaro', 'grisClaro'
 
@@ -339,31 +358,25 @@ def moverNubes(limite, posición):
         nube_2.centroX = limite
 
 ## Mover carros de escena 1
-### Mover carros hacia la izquieda
-def moverCarroALaIzquierda(carro, posición, movimiento, limite):
+def moverCarro(carro, posición, movimiento, limite):
     carro.centroX -= movimiento
-    if carro.centroX == limite:
-        carro.centroX = posición
-
-### Mover carros hacia la derecha
-def moverCarroALaDerecha(carro, posición, movimiento, limite):
-    carro.centroX += movimiento
     if carro.centroX == limite:
         carro.centroX = posición
 
 # Evento de paso para animar escenas        
 def enPaso():
+    # General
     llenarSol() # Animar sol
     moverNubes(500, -100) # Mover nubes
     
     # Escena 1
     if app.estado == 'en escena ciudad':
-        moverCarroALaIzquierda(carro_1, 440, 10, -600) # Mover carro azul
-        moverCarroALaIzquierda(carro_2, 540, 7, -500) # Mover carro violeta
-        moverCarroALaIzquierda(carro_3, 690, 5, -400) # Mover carro gris
-        moverCarroALaDerecha(carro_4, -40, 10, 500) # Mover carro verde
-        moverCarroALaDerecha(carro_5, -240, 7, 600) # Mover carro rojo
-        moverCarroALaDerecha(carro_6, -440, 5, 700) # Mover carro naranja
+        moverCarro(carro_1, 440, 10, -600) # Mover carro azul
+        moverCarro(carro_2, 540, 7, -500) # Mover carro violeta
+        moverCarro(carro_3, 690, 5, -400) # Mover carro gris
+        moverCarro(carro_4, -40, -10, 500) # Mover carro verde
+        moverCarro(carro_5, -240, -7, 600) # Mover carro rojo
+        moverCarro(carro_6, -440, -5, 700) # Mover carro naranja
     
     #  Escena 2
     elif app.estado == 'en escena bosque deteriorandose':
@@ -372,6 +385,7 @@ def enPaso():
         for i in cenizas:
             if i.centroY > 355:
                 cenizas.quitar(i)
+    
     # Escena 6
     elif app.estado == 'en escena río limpio':
         ola.opacidad += 1 * app.dirección
