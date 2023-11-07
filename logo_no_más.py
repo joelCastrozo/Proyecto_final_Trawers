@@ -1,8 +1,8 @@
-app.fondo = 'blanco'
+from cmu_graphics import *
 fotoDeProhibirTalaDeArboles = Grupo(
     Arco(200,200,235,235,140,125, relleno=rgb(103,153,102)),
     Poligono(200,200,280,300,265,300,190,205,130,205,83,210, relleno='blanco'),
-    Circulo(200,200,140, relleno=None, borde='rojo', anchuraDeBorde=12),
+    Circulo(200,200,140, relleno=None, borde='rojo', anchuraDeBorde=2),
     Rect(197,187,9,40,rotarAngulo=40,relleno=gradiente('marronCuero', 'marron'), borde='marronCuero', anchuraDeBorde=1),
     Ovalo(189,222,10,5,rotarAngulo=40,relleno=gradiente('salmonClaro', 'salmonClaro', 'marron', 'salmonOscuro', 'salmonOscuro', inicio='superior')),
     Linea(120,100,280,300, relleno='rojo', anchuraDeLinea=12),
@@ -18,3 +18,13 @@ fotoDeProhibirTalaDeArboles = Grupo(
     Poligono(284,110,213,144,260,190, relleno='verdeBosque'),
     Poligono(245,153,233,214,190,175, relleno='verdeBosque')
     )
+
+fotoDeProhibirTalaDeArboles.ancho = 70
+fotoDeProhibirTalaDeArboles.altura = 70
+fotoDeProhibirTalaDeArboles.centroX = 120
+fotoDeProhibirTalaDeArboles.centroY = 130
+
+def modulo_de_logo():
+    fotoDeProhibirTalaDeArboles.centroX = 20000
+
+cmu_graphics.run()

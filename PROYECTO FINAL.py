@@ -780,7 +780,7 @@ def enTeclaPresionada(tecla):
                                 dibujarPersonaDePalo(60 + 140*e, 280, 2, 7))
             elif app.estado == 'En escena de campaña': 
                 app.fondo = 'azulCieloProfundo'
-                escenaDeSalvaciónDeBosque.vaciar(), escenaDeReciclaje.agregar(sol, nube_1, nube_2, fondo_montañoso, suelo)
+                escenaDeSalvaciónDeBosque.vaciar(), escenaDeReciclaje.agregar(sol, nube_1, nube_2, fondo_montañoso, suelo, arbóles)
                 escenaDeReciclaje.visible, app.estado, suelo.relleno = True, 'En escena de reciclaje', gradient('verde', 'verdeBosque', 'verde', inicio='inferior')
                 nube_1.relleno, nube_2.relleno = 'nieve', 'nieve'
                 app.subiendoCartél = False
