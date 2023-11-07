@@ -607,12 +607,14 @@ app.objeto = Group()
 app.objeto.visible = False
 app.elección = -1
 
+app.textos = Grupo()
+
 def dibujarCaneca(cx=200, cy=200, color_base='rojo', color_secundario='ladrillo', texto='None'):
     caneca = Group(Polygon(cx-170,cy+100,cx-160,cy+200,cx-80,cy+200,cx-70,cy+100,relleno=color_base),
     Rect(cx-173,cy+90,105,10,relleno=color_secundario),
     Polygon(cx-165,cy+90,cx-160,cy+60,cx-80,cy+60,cx-75,cy+90,relleno='negro',borde=color_base,anchuraDeBorde=5),
     Circle(cx-120,cy+140,30,relleno='blanco'))
-    Label(texto,cx-120,cy+140,tamaño=10,negrito=True, visible=False)
+    app.textos.agregar(Label(texto,cx-120,cy+140,tamaño=10,negrito=True))
     caneca.ancho -= 20
     caneca.visible = False
     caneca.altura -= 20
@@ -634,7 +636,7 @@ def ruleta():
 
 # Grupo 16 - Mini juego II - Recicle bucle!
 ### Grupo de escena interactiva de minijuego 2
-minijuegoEscena_2 = Group(suelo_de_juego, canecaDeMetales, canecaDePapel, canecaDeVidrios, canecaDePlastico, app.objeto, texto)
+minijuegoEscena_2 = Group(suelo_de_juego, canecaDeMetales, canecaDePapel, canecaDeVidrios, canecaDePlastico, app.objeto, texto, app.textos)
 ### Propiedad visible de escena interactiva de minijuego 3
 minijuegoEscena_2.visible = False
 
@@ -836,7 +838,7 @@ def enRatónArrastrado(ratónX, ratónY):
             agua.centroY = ratónY
         if agua.tocaFigura(arbol_DE):
             if arbol_DE.altura < 160: 
-                arbol_DE.inferior -= 8
+                arbol_DE.inferior -= 2
                 arbol_DE.altura += 5
                 arbol_DE.ancho += 2
     
