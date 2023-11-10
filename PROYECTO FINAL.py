@@ -12,11 +12,9 @@ app.estado = 'Apagada' # Define que la app aún no ha pasadp la primera escena
 app.fondo = gradient(rgb(35,40,48), rgb(48,66,70), rgb(82,100,102), rgb(109, 135,150), inicio='superior') # El fondo inicial/actual de la pantalla de inicio
 
 ## Propiedad del app, basado en si el cartél de escenas está abajo o arriba
-app.subiendoCartél = False # El estado inicial del cartél de rótulos
+app.cartel_estado = 'Oculto' # El estado inicial del cartél de rótulos
 
 ## Propiedad para textos, basado en sí mostramos o no un texto explicativo de escena
-app.textoEnInicio = True # Declara el estado actual del texto inicial del programa
-app.textoEnPantalla = False # Declara el estado actual del texto explicativo de las escenas
 app.valoresDeTexto_up, app.valoresDeTexto_mid, app.valoresDeTexto_down = 0, 1, 2 # Declara el estado actual del texto explicativo de las escenas
 
 # Objetos para todas las escenas
@@ -45,10 +43,9 @@ nube_1.visible, nube_2.visible, fondo_montañoso.visible = False, False, False #
 ## Funciones y variables para escena 0
 
 ### Cubierta
-cubierta_arriba = Rect(0,0,400,200) # Cubierta arriba
-cubierta_abajo = Rect(0,200,400,200) # Cubierta abajo
-if app.estado == 'Apagada':
-    print('>> ¡Presione espacio para encender!')
+cubierta_superior = Rect(0,0,400,200) # Cubierta arriba
+cubierta_inferior = Rect(0,200,400,200) # Cubierta abajo
+print('>> ¡Presione espacio para encender!')
 
 ### Grupo para las cadenas de cartél
 cadenas_de_cartél = Group() # Grupo vacío para guardar las cadenas
@@ -76,7 +73,7 @@ panelDeTexto = Group(Rect(20,175,360,60, relleno=gradient('azur', 'grisClaro'), 
 titulo = Label('¡Hoy veremos los problemas que causan', 200,195, relleno='negro', italica=True, tamaño=16, anchuraDeBorde=6, negrito=True) # Titulo del proyecto
 subtitulo = Label('daños en el entorno natural y en nosotros!', 200,215, relleno='negro', italica=True, tamaño=16, anchuraDeBorde=6, negrito=True) # Subtitulo del proyecto
 indicacion = Label('Presiona la tecla arriba para continuar', 200,380, relleno='negro', italica=True, tamaño=16, anchuraDeBorde=4) # Indicación de uso del proyecto
-introducción = Group(cadenas_de_cartél, panelDeTexto, titulo, subtitulo, indicacion, cubierta_arriba, cubierta_abajo) # Grupo de pantalla de introducción
+introducción = Group(cadenas_de_cartél, panelDeTexto, titulo, subtitulo, indicacion, cubierta_superior, cubierta_inferior) # Grupo de pantalla de introducción
 
 # Para Escena 1 - Escena de ciudad #
 ## Funciones y variables para recrear la escena de la ciudad ##
@@ -331,11 +328,11 @@ escenaDeBosqueTalado.visible = False
 ## Funciones y variables para recrear la escena del río cuando está siendo contaminado ##
 
 ### Grupo de fondo de ciudad
-fondo_es_río = Group()
+fondo_de_río = Group()
 papelera = Group()
 
 ### Propiedad visible para fondo de escena de río
-fondo_es_río.visible = False
+fondo_de_río.visible = False
 
 def papeles(x,y):
         papel = Group(Polygon(x,y,x-20,y+20,x-40,y+40,x-40,y+60,x-35,y+60,x-20,y+80,x,y+80,x+20,y+70,x+40,y+40,x+40,y+10, relleno='marfil',borde='negro'), 
@@ -348,15 +345,16 @@ def papeles(x,y):
         papelera.agregar(papel)
         
 ### Para fondo de escenas de río
-def dibujarEdificio(x, h=140, o=60):
-    fondo_río = Group(Rect(x, h + 10, 50, 400 - h, alinear='superior', relleno=gradient(rgb(150, 195, 90), rgb(195, 110, 115), inicio='izquierda'), opacidad=o),
-    Polygon(x, h - 30, x - 25, h + 10, x + 25, h + 10, relleno=gradient(rgb(150, 195, 90), rgb(195, 110, 115), inicio='izquierda'), opacidad=o))
-    return fondo_río
-     
-### Bucle para fondo de ciudad
-for i in range(6):
-    fondo_es_río.agregar(dibujarEdificio(80 * i))
-    fondo_es_río.agregar(dibujarEdificio(40 + 80 * i, 110, 45))
+def crear_edificio_de_fondo(x, h=140, o=60):
+    fondo_de_río.agregar(Rect(x, h + 10, 50, 400 - h))
+    for cx in range(3):
+        for cy in range(12):
+            fondo_de_río.agregar(Rect(x + 16.5 * cx, (h + 10) + 15 * cy, 17, 15, relleno=gradiente('azulClaro', rgb(224-cy, 255, 255-cx), inicio='inferior-izquierda'), borde='negro', anchuraDeBorde=0.1, opacidad=o/1+cx*cy))
+
+for i in range(3):
+    crear_edificio_de_fondo(0+100*i, 140-30*i)
+    crear_edificio_de_fondo(50+100*i, 130-10*i)
+    crear_edificio_de_fondo(300+50*i, 140-25*i)
 
 ### Propiedad para animar el río
 app.dirección = 0
@@ -401,7 +399,7 @@ tablero.visible = False
 
 ### Burbuja de texto
 burbujaDeTexto = Group(
-    Oval(200, 160, 175, 90, relleno=None, borde='negro'),
+    Oval(200, 160, 175, 90, relleno='blanco', borde='negro'),
     Line(400-220, 205, 400-240, 225),
     Line(400-230, 205, 400-240, 225),
     Label('¡Ahora veremos las',200,145),
@@ -655,165 +653,163 @@ app.i2 = -1
 # Evento para cambiar entre escenas de una a una
 def enTeclaPresionada(tecla):
     if tecla == 'espacio' and app.estado == 'Apagada':
-        app.estado = 'Mostrar animación'
-    if tecla == 'arriba' and app.estado == 'Mostrar animación':
-        titulo.valor = '¡El ambiente está en riesgo y nosotros'
-        subtitulo.valor = 'tenemos la tarea de protegerlo y mejorarlo!'
-        indicacion.valor = 'Presione la tecla derecha para la siguiente escena'
-        app.textoEnInicio = False
-        app.estado = 'En inicio'
-    if app.textoEnInicio == False and tecla == 'derecha':
-        app.textoEnPantalla = True
-        print('>> Debes retener/mantener presionada la tecla arriba para poder quitar el cartél y continuar a la escena siguiente')
-        if app.estado == 'En inicio':
-            app.fondo = 'azulCielo'
-            print('>> Tenga cuidado con la tecla derecha, ya que no puedes regresar')
-            escenaDeCiudad.visible, app.estado, suelo.relleno = True, 'En escena de ciudad', gradient('gris', 'gainsboro', inicio='inferior')
-            escenaDeCiudad.agregar(sol, nube_1, nube_2), introducción.vaciar()
-            print('>> Presiona espacio y mira los cambios en el sol')
-            print('>> Evite presionar la tecla ´ctrl´ o romperá el sistema')
-            app.subiendoCartél = False
-        if app.subiendoCartél == True:
+        app.estado = 'Encendiendo'
+        print('>> Encendiendo app...')
+    elif tecla == 'arriba' and app.estado == 'En escena 0':
+        titulo.valor = '¡El ambiente está en peligro y nosotros'
+        subtitulo.valor = 'debemos luchar por protegerlo!'
+        indicacion.valor = 'Presione derecha para la escena siguiente'
+        app.estado = 'En escena 0.5'
+        print('>> Tenga cuidado con la tecla derecha, ya que no puede regresarse')
+    if tecla == 'derecha':
+        if app.cartel_estado == 'Arriba':
             app.valoresDeTexto_up += 3
             app.valoresDeTexto_mid += 3
             app.valoresDeTexto_down += 3
-            if app.estado == 'En escena de ciudad':
-                sol.relleno = gradient('caqui', 'naranja', 'amarillo')
-                app.fondo = gradient('azulCadete', 'azulCielo', 'azulCieloProfundo', inicio='superior')
-                escenaDeCiudad.vaciar(), escenaDeBosqueVerde.agregar(sol, nube_1, nube_2, suelo, camino, fondo_montañoso, arbóles)
-                escenaDeBosqueVerde.visible, app.estado, suelo.relleno = True, 'En escena de bosque verde', gradient('cespedVerde', 'verdeBosque', inicio='inferior')
-                nube_1.relleno, nube_2.relleno = 'nieve', 'nieve'
-                app.subiendoCartél = False
-            elif app.estado == 'En escena de bosque verde': 
-                escenaDeBosqueVerde.vaciar(), basuraDeCalle.vaciar(), escenaDeBosqueQuemandose.agregar(sol, nube_1, nube_2, suelo, camino, fondo_montañoso, cenizas, arbóles_quemados)
-                escenaDeBosqueQuemandose.visible, app.estado, suelo.relleno = True, 'En escena de bosque deteriorandose', gradient('verdeBosque', 'grisClaro', 'salmonClaro', inicio='inferior')
-                nube_1.relleno, nube_2.relleno = 'gainsboro', 'gainsboro'
-                app.subiendoCartél = False
-            elif app.estado == 'En escena de bosque deteriorandose': 
-                app.fondo = gradient('gris', 'azulCielo', 'azulCieloProfundo', inicio='superior')
-                escenaDeBosqueQuemandose.vaciar(), escenaDeBosqueSeco.agregar(sol, nube_1, nube_2, suelo, camino, fondo_montañoso, arbóles_secos)
-                escenaDeBosqueSeco.visible, app.estado, suelo.relleno = True, 'En escena de bosque seco', gradient('gris', 'grisClaro', 'salmonClaro', inicio='inferior')
-                nube_1.relleno, nube_2.relleno = 'grisClaro', 'grisClaro'
-                app.subiendoCartél = False
-            elif app.estado == 'En escena de bosque seco': 
-                app.fondo = gradient('gris', 'azulCielo', 'azulCieloProfundo', inicio='superior')
-                escenaDeBosqueSeco.vaciar(), escenaDeBosqueTalado.agregar(sol, nube_1, nube_2, suelo, camino, fondo_montañoso, arbóles_talados)
-                escenaDeBosqueTalado.visible, app.estado, suelo.relleno = True, 'En escena de bosque talado', gradient('gris', 'grisClaro', 'salmonClaro', inicio='inferior')
-                nube_1.relleno, nube_2.relleno = 'grisClaro', 'grisClaro'
-                app.subiendoCartél = False
-            elif app.estado == 'En escena de bosque talado': 
-                app.fondo = gradient('plateado', 'azulCielo', 'azulCieloProfundo', inicio='superior')
-                escenaDeBosqueTalado.vaciar(), escenaDeRíoEnsuciado.agregar(fondo_es_río, sol, nube_1, nube_2, suelo, banca, río, ola, papelera)
-                escenaDeRíoEnsuciado.visible, app.estado, suelo.relleno = True, 'En escena de río ensuciado', gradient('gris', 'grisClaro', 'gainsboro', inicio='inferior')
-                nube_1.relleno, nube_2.relleno, app.dirección = 'grisClaro', 'grisClaro', 0.3
-                app.subiendoCartél = False
-                print('>> Presiona el lienzo y mire como se crea papel en el suelo y en el río')
-                from rjasDEciudad import dibujaReja
-                dibujaReja()
-            elif app.estado == 'En escena de río ensuciado': 
-                escenaDeRíoEnsuciado.vaciar(), escenaDeRíoContaminado.agregar(fondo_es_río, sol, nube_1, nube_2, suelo, banca, río, ola, papelera)
-                escenaDeRíoContaminado.visible, app.estado, suelo.relleno = True, 'En escena de río contaminado', gradient('gris', 'grisClaro', 'gainsboro', inicio='inferior')
-                nube_1.relleno, nube_2.relleno = 'grisClaro', 'grisClaro'
-                app.subiendoCartél = False
-                from pez import fotoDePezMuerto
-            elif app.estado == 'En escena de río contaminado': 
-                from rótulosDeCartél import borrarCartél # Módulo de cartél de escenas
-                from rjasDEciudad import dibujaReja
-                from pez import vaciar
-                vaciar()
-                dibujaReja(True)
-                borrarCartél()
-                escenaDeRíoContaminado.vaciar(), escenaDeReunión.agregar(tablero, suelo, dibujarPersonaDePalo(200,270), burbujaDeTexto)
-                escenaDeReunión.visible, app.estado, suelo.relleno, app.fondo = True, 'En escena de reunión', 'azulCadete', gradient('azulCadete', 'azulMediaNoche')
-                nube_1.relleno, nube_2.relleno = 'grisClaro', 'grisClaro'
-                from logo_no_más import fotoDeProhibirTalaDeArboles
-            elif app.estado == 'En escena de reunión': 
-                app.fondo = gradient('plateado', 'azulCielo', 'azulCieloProfundo', inicio='superior')
-                from rótulosDeCartél import devolverCartél # Módulo de cartél de escenas
-                from logo_no_más import modulo_de_logo 
-                escenaDeReunión.vaciar(), escenaDeJardín.agregar(sol, nube_1, nube_2, suelo, fondo_montañoso)
-                app.fondo, carretilla_de_arena.inferior = 'azulCielo', 360
-                escenaDeJardín.visible, app.estado, suelo.relleno = True, 'En escena de jardín', gradient('verde', 'verdeBosque', 'azulCadete', inicio='inferior')
-                nube_1.relleno, nube_2.relleno = 'grisClaro', 'grisClaro'
-                app.subiendoCartél = False
-                devolverCartél()
-                modulo_de_logo()
-                escenaDeJardín.agregar(arbustos, carretilla_de_arena, plantaderas, brotes)
-                from vallasDeJardín import dibujarValla
-                dibujarValla()
-            elif app.estado == 'En escena de jardín': 
-                app.fondo = gradient('gainsboro', 'azulCielo', 'azulCieloProfundo', inicio='superior')
-                escenaDeJardín.vaciar(), escenaDeRíoLimpio.agregar(fondo_es_río, sol, nube_1, nube_2, suelo, banca, río, ola, tarroDeBasura_1, tarroDeBasura_2, tarroDeBasura_3)
-                escenaDeRíoLimpio.visible, app.estado, suelo.relleno = True, 'En escena de río límpio', gradient('gris', 'grisClaro', 'gainsboro', inicio='inferior')
-                nube_1.relleno, nube_2.relleno = 'grisClaro', 'grisClaro'
-                app.subiendoCartél = False
-                from rjasDEciudad import dibujaReja
-                dibujaReja()
-                from vallasDeJardín import quitarVallas
-                quitarVallas()
-            elif app.estado == 'En escena de río límpio': 
-                app.fondo = gradient('azulCadete', 'azulCielo', 'azulCieloProfundo', inicio='superior')
-                from tienda_eco import tienda
-                tienda()
-                from rjasDEciudad import dibujaReja
-                dibujaReja(True)
-                from rótulosDeCartél import front
-                front()
-                escenaDeRíoLimpio.vaciar(), escenaDeTienda.agregar(sol, nube_1, nube_2, suelo, Rect(-20,320,440,80, relleno='grisOscuro', borde='gris', anchuraDeBorde=5), 
-                                                                Line(0,360,410,360, relleno=gradient('negro', 'grisOscuro', 'negro'), anchuraDeLinea=4, guion=(5,6)))
-                escenaDeTienda.visible, app.estado, suelo.relleno = True, 'En escena de tienda', gradient('gris', 'blanco', 'nieve', inicio='inferior')
-                nube_1.relleno, nube_2.relleno = 'gainsboro', 'gainsboro'
-                app.subiendoCartél = False
-                from camion import camión
-            elif app.estado == 'En escena de tienda': 
-                app.fondo = gradient('azulCielo', 'azulCieloProfundo', inicio='superior')
-                escenaDeTienda.vaciar(), escenaDeSalvaciónDeBosque.agregar(sol, nube_1, nube_2, fondo_montañoso, suelo, arbóles, cartél_bosque)
-                escenaDeSalvaciónDeBosque.visible, app.estado, suelo.relleno = True, 'En escena de campaña', gradient('gris', 'blanco', 'nieve', inicio='inferior')
-                nube_1.relleno, nube_2.relleno = 'gainsboro', 'gainsboro'
-                app.subiendoCartél = False
-                from camion import modulo_de_camion
-                modulo_de_camion()
-                from tienda_eco import eliminar_tienda
-                eliminar_tienda()
-                ### Bucle para dibujar personas y agregarlas al grupo
-                for i in range(2):
-                    for e in range(3):
-                        escenaDeSalvaciónDeBosque.agregar(dibujarPersonaDePalo(130 + 140*i, 280),
-                                dibujarPersonaDePalo(60 + 140*e, 280, 2, 7))
-            elif app.estado == 'En escena de campaña': 
-                app.fondo = 'azulCieloProfundo'
-                escenaDeSalvaciónDeBosque.vaciar(), escenaDeReciclaje.agregar(sol, nube_1, nube_2, fondo_montañoso, suelo, arbóles)
-                escenaDeReciclaje.visible, app.estado, suelo.relleno = True, 'En escena de reciclaje', gradient('verde', 'verdeBosque', 'verde', inicio='inferior')
-                nube_1.relleno, nube_2.relleno = 'nieve', 'nieve'
-                app.subiendoCartél = False
-            elif app.estado == 'En escena de reciclaje': 
-                app.fondo = 'blanco'
-                escenaDeReciclaje.vaciar()
-                app.estado = 'En escena de resumén I'
-                escenaDeResumén.visible = True
-                app.textoEnPantalla = False
-                from rótulosDeCartél import borrarCartél
-                borrarCartél()
-            elif app.estado == 'En escena de resumén I': 
-                app.grupo.vaciar()
-                app.fondo = 'azulCielo'
-                minijuegoEscena_1.agregar(sol, nube_1, nube_2, fondo_montañoso, suelo, macetero, semilla, dibujar_indicaciones())
-                minijuegoEscena_1.visible, app.estado, suelo.relleno = True, 'En escena de minijuego I', gradient('verde', 'verdeBosque', 'verde', inicio='inferior')
-                nube_1.relleno, nube_2.relleno = 'nieve', 'nieve'
-            elif app.estado == 'En escena de minijuego I': 
-                minijuegoEscena_1.vaciar()
-                app.estado = 'En escena de minijuego II'
-                app.fondo = 'marronCuero'
-                minijuegoEscena_2.visible = True
-            elif app.estado == 'En escena de minijuego II':
-                minijuegoEscena_2.vaciar()
-                app.estado = 'En escena de final'
+        if app.estado == 'En escena 0.5':
+            app.fondo = 'azulCielo'
+            escenaDeCiudad.visible, app.estado, suelo.relleno = True, 'En escena 1 - Ciudad', gradient('gris', 'gainsboro', inicio='inferior')
+            escenaDeCiudad.agregar(sol, nube_1, nube_2), introducción.vaciar()
+            print('>> Presiona espacio y mira los cambios en el sol')
+            print('>> Evite presionar la tecla ´ctrl´ o romperá el sistema')
+            app.cartel_estado = 'Abajo'
+        elif app.estado == 'En escena 1 - Ciudad':
+            sol.relleno = gradient('caqui', 'naranja', 'amarillo')
+            app.fondo = gradient('azulCadete', 'azulCielo', 'azulCieloProfundo', inicio='superior')
+            escenaDeCiudad.vaciar(), escenaDeBosqueVerde.agregar(sol, nube_1, nube_2, suelo, camino, fondo_montañoso, arbóles)
+            escenaDeBosqueVerde.visible, app.estado, suelo.relleno = True, 'Escena 2 - Bosque', gradient('cespedVerde', 'verdeBosque', inicio='inferior')
+            nube_1.relleno, nube_2.relleno = 'nieve', 'nieve'
+            app.cartel_estado = 'Abajo'
+        elif app.estado == 'Escena 2 - Bosque': 
+            escenaDeBosqueVerde.vaciar(), basuraDeCalle.vaciar(), escenaDeBosqueQuemandose.agregar(sol, nube_1, nube_2, suelo, camino, fondo_montañoso, cenizas, arbóles_quemados)
+            escenaDeBosqueQuemandose.visible, app.estado, suelo.relleno = True, 'En escena de bosque deteriorandose', gradient('verdeBosque', 'grisClaro', 'salmonClaro', inicio='inferior')
+            nube_1.relleno, nube_2.relleno = 'gainsboro', 'gainsboro'
+            app.cartel_estado = 'Abajo'
+        elif app.estado == 'En escena de bosque deteriorandose': 
+            app.fondo = gradient('gris', 'azulCielo', 'azulCieloProfundo', inicio='superior')
+            escenaDeBosqueQuemandose.vaciar(), escenaDeBosqueSeco.agregar(sol, nube_1, nube_2, suelo, camino, fondo_montañoso, arbóles_secos)
+            escenaDeBosqueSeco.visible, app.estado, suelo.relleno = True, 'En escena de bosque seco', gradient('gris', 'grisClaro', 'salmonClaro', inicio='inferior')
+            nube_1.relleno, nube_2.relleno = 'grisClaro', 'grisClaro'
+            app.cartel_estado = 'Abajo'
+        elif app.estado == 'En escena de bosque seco': 
+            app.fondo = gradient('gris', 'azulCielo', 'azulCieloProfundo', inicio='superior')
+            escenaDeBosqueSeco.vaciar(), escenaDeBosqueTalado.agregar(sol, nube_1, nube_2, suelo, camino, fondo_montañoso, arbóles_talados)
+            escenaDeBosqueTalado.visible, app.estado, suelo.relleno = True, 'En escena de bosque talado', gradient('gris', 'grisClaro', 'salmonClaro', inicio='inferior')
+            nube_1.relleno, nube_2.relleno = 'grisClaro', 'grisClaro'
+            app.cartel_estado = 'Abajo'
+        elif app.estado == 'En escena de bosque talado': 
+            app.fondo = gradient('plateado', 'azulCielo', 'azulCieloProfundo', inicio='superior')
+            escenaDeBosqueTalado.vaciar(), escenaDeRíoEnsuciado.agregar(fondo_de_río, sol, nube_1, nube_2, suelo, banca, río, ola, papelera)
+            escenaDeRíoEnsuciado.visible, app.estado, suelo.relleno = True, 'En escena de río ensuciado', gradient('gris', 'grisClaro', 'gainsboro', inicio='inferior')
+            nube_1.relleno, nube_2.relleno, app.dirección = 'grisClaro', 'grisClaro', 0.3
+            app.cartel_estado = 'Abajo'
+            print('>> Presiona el lienzo y mire como se crea papel en el suelo y en el río')
+            from rjasDEciudad import dibujaReja
+            dibujaReja()
+        elif app.estado == 'En escena de río ensuciado': 
+            escenaDeRíoEnsuciado.vaciar(), escenaDeRíoContaminado.agregar(fondo_de_río, sol, nube_1, nube_2, suelo, banca, río, ola, papelera)
+            escenaDeRíoContaminado.visible, app.estado, suelo.relleno = True, 'En escena de río contaminado', gradient('gris', 'grisClaro', 'gainsboro', inicio='inferior')
+            nube_1.relleno, nube_2.relleno = 'grisClaro', 'grisClaro'
+            app.cartel_estado = 'Abajo'
+            from pez import fotoDePezMuerto
+        elif app.estado == 'En escena de río contaminado': 
+            from rótulosDeCartél import borrarCartél # Módulo de cartél de escenas
+            from rjasDEciudad import dibujaReja
+            from pez import vaciar
+            vaciar()
+            dibujaReja(True)
+            borrarCartél()
+            escenaDeRíoContaminado.vaciar(), escenaDeReunión.agregar(tablero, suelo, dibujarPersonaDePalo(200,270), burbujaDeTexto)
+            escenaDeReunión.visible, app.estado, suelo.relleno, app.fondo = True, 'En escena de reunión', 'azulCadete', gradient('azulCadete', 'azulMediaNoche')
+            nube_1.relleno, nube_2.relleno = 'grisClaro', 'grisClaro'
+            from logo_no_más import fotoDeProhibirTalaDeArboles
+        elif app.estado == 'En escena de reunión': 
+            app.fondo = gradient('plateado', 'azulCielo', 'azulCieloProfundo', inicio='superior')
+            from rótulosDeCartél import devolverCartél # Módulo de cartél de escenas
+            from logo_no_más import modulo_de_logo 
+            escenaDeReunión.vaciar(), escenaDeJardín.agregar(sol, nube_1, nube_2, suelo, fondo_montañoso)
+            app.fondo, carretilla_de_arena.inferior = 'azulCielo', 360
+            escenaDeJardín.visible, app.estado, suelo.relleno = True, 'En escena de jardín', gradient('verde', 'verdeBosque', 'azulCadete', inicio='inferior')
+            nube_1.relleno, nube_2.relleno = 'grisClaro', 'grisClaro'
+            app.cartel_estado = 'Abajo'
+            devolverCartél()
+            modulo_de_logo()
+            escenaDeJardín.agregar(arbustos, carretilla_de_arena, plantaderas, brotes)
+            from vallasDeJardín import dibujarValla
+            dibujarValla()
+        elif app.estado == 'En escena de jardín': 
+            app.fondo = gradient('gainsboro', 'azulCielo', 'azulCieloProfundo', inicio='superior')
+            escenaDeJardín.vaciar(), escenaDeRíoLimpio.agregar(fondo_de_río, sol, nube_1, nube_2, suelo, banca, río, ola, tarroDeBasura_1, tarroDeBasura_2, tarroDeBasura_3)
+            escenaDeRíoLimpio.visible, app.estado, suelo.relleno = True, 'En escena de río límpio', gradient('gris', 'grisClaro', 'gainsboro', inicio='inferior')
+            nube_1.relleno, nube_2.relleno = 'grisClaro', 'grisClaro'
+            app.cartel_estado = 'Abajo'
+            from rjasDEciudad import dibujaReja
+            dibujaReja()
+            from vallasDeJardín import quitarVallas
+            quitarVallas()
+        elif app.estado == 'En escena de río límpio': 
+            app.fondo = gradient('azulCadete', 'azulCielo', 'azulCieloProfundo', inicio='superior')
+            from tienda_eco import tienda
+            tienda()
+            from rjasDEciudad import dibujaReja
+            dibujaReja(True)
+            from rótulosDeCartél import front
+            front()
+            escenaDeRíoLimpio.vaciar(), escenaDeTienda.agregar(sol, nube_1, nube_2, suelo, Rect(-20,320,440,80, relleno='grisOscuro', borde='gris', anchuraDeBorde=5), 
+                                                            Line(0,360,410,360, relleno=gradient('negro', 'grisOscuro', 'negro'), anchuraDeLinea=4, guion=(5,6)))
+            escenaDeTienda.visible, app.estado, suelo.relleno = True, 'En escena de tienda', gradient('gris', 'blanco', 'nieve', inicio='inferior')
+            nube_1.relleno, nube_2.relleno = 'gainsboro', 'gainsboro'
+            app.cartel_estado = 'Abajo'
+            from camion import camión
+        elif app.estado == 'En escena de tienda': 
+            app.fondo = gradient('azulCielo', 'azulCieloProfundo', inicio='superior')
+            escenaDeTienda.vaciar(), escenaDeSalvaciónDeBosque.agregar(sol, nube_1, nube_2, fondo_montañoso, suelo, arbóles, cartél_bosque)
+            escenaDeSalvaciónDeBosque.visible, app.estado, suelo.relleno = True, 'En escena de campaña', gradient('gris', 'blanco', 'nieve', inicio='inferior')
+            nube_1.relleno, nube_2.relleno = 'gainsboro', 'gainsboro'
+            app.cartel_estado = 'Abajo'
+            from camion import modulo_de_camion
+            modulo_de_camion()
+            from tienda_eco import eliminar_tienda
+            eliminar_tienda()
+            ### Bucle para dibujar personas y agregarlas al grupo
+            for i in range(2):
+                for e in range(3):
+                    escenaDeSalvaciónDeBosque.agregar(dibujarPersonaDePalo(130 + 140*i, 280),
+                            dibujarPersonaDePalo(60 + 140*e, 280, 2, 7))
+        elif app.estado == 'En escena de campaña': 
+            app.fondo = 'azulCieloProfundo'
+            escenaDeSalvaciónDeBosque.vaciar(), escenaDeReciclaje.agregar(sol, nube_1, nube_2, fondo_montañoso, suelo, arbóles)
+            escenaDeReciclaje.visible, app.estado, suelo.relleno = True, 'En escena de reciclaje', gradient('verde', 'verdeBosque', 'verde', inicio='inferior')
+            nube_1.relleno, nube_2.relleno = 'nieve', 'nieve'
+            app.cartel_estado = 'Abajo'
+        elif app.estado == 'En escena de reciclaje': 
+            app.fondo = 'blanco'
+            escenaDeReciclaje.vaciar()
+            app.estado = 'En escena de resumén I'
+            escenaDeResumén.visible = True
+            app.textoEnPantalla = False
+            from rótulosDeCartél import borrarCartél
+            borrarCartél()
+        elif app.estado == 'En escena de resumén I': 
+            app.grupo.vaciar()
+            app.fondo = 'azulCielo'
+            minijuegoEscena_1.agregar(sol, nube_1, nube_2, fondo_montañoso, suelo, macetero, semilla, dibujar_indicaciones())
+            minijuegoEscena_1.visible, app.estado, suelo.relleno = True, 'En escena de minijuego I', gradient('verde', 'verdeBosque', 'verde', inicio='inferior')
+            nube_1.relleno, nube_2.relleno = 'nieve', 'nieve'
+        elif app.estado == 'En escena de minijuego I': 
+            minijuegoEscena_1.vaciar()
+            app.estado = 'En escena de minijuego II'
+            app.fondo = 'marronCuero'
+            minijuegoEscena_2.visible = True
+        elif app.estado == 'En escena de minijuego II':
+            minijuegoEscena_2.vaciar()
+            app.estado = 'En escena de final'
 
 sol.g = 255
 
 # Evento especial
 def enTeclaRetenida(teclas):
-    if 'espacio' in teclas and app.estado == 'En escena de ciudad':
+    if 'espacio' in teclas and app.estado == 'En escena 1 - Ciudad':
         if basuraDeCalle.opacidad < 100:
             basuraDeCalle.opacidad += 1
             sol.g -= 1
@@ -823,7 +819,7 @@ def enTeclaRetenida(teclas):
         from rótulosDeCartél import vaciarRótulo # Módulo de cartél de escenas
         subirCartél()
         vaciarRótulo()
-        app.subiendoCartél = True
+        app.cartel_estado = 'Arriba'
 
 # Evento para interactuar en las escenas
 ## enRatónArrastrado
@@ -933,29 +929,28 @@ def enPaso():
     moverNubes(500, -100) # Mover nubes
     
     # Escena 0
-    if app.estado == 'Mostrar animación':
-        if cubierta_arriba.inferior > 0:
-            cubierta_arriba.centroY -= 5
-            
-        if cubierta_abajo.superior < 400:
-            cubierta_abajo.centroY += 5
+    if app.estado == 'Encendiendo':
+        cubierta_superior.centroY -= 5
+        cubierta_inferior.centroY += 5
+        if cubierta_superior.inferior < 0 and cubierta_inferior.superior > 400:
+            app.estado = 'En escena 0'
+            print('>> ¡¡App Encendida!')
 
     # Textos de escenas
-    if app.textoEnPantalla == True:
-        if app.subiendoCartél == False:
-            from rótulosDeCartél import bajarCartél # Módulo de cartél de escenas
-            from rótulosDeCartél import llenarRótulos # Módulo de cartél de escenas
-            from rótulosDeCartél import mensajes # Módulo de cartél de escenas
-            from rótulosDeCartél import texto_arriba # Módulo de cartél de escenas
-            from rótulosDeCartél import texto_en_medio # Módulo de cartél de escenas
-            from rótulosDeCartél import texto_abajo # Módulo de cartél de escenas
-            bajarCartél()
-            llenarRótulos(mensajes[app.valoresDeTexto_up], texto_arriba)
-            llenarRótulos(mensajes[app.valoresDeTexto_mid], texto_en_medio)
-            llenarRótulos(mensajes[app.valoresDeTexto_down], texto_abajo)    
+    if app.cartel_estado == 'Abajo':
+        from rótulosDeCartél import bajarCartél # Módulo de cartél de escenas
+        from rótulosDeCartél import llenarRótulos # Módulo de cartél de escenas
+        from rótulosDeCartél import mensajes # Módulo de cartél de escenas
+        from rótulosDeCartél import texto_arriba # Módulo de cartél de escenas
+        from rótulosDeCartél import texto_en_medio # Módulo de cartél de escenas
+        from rótulosDeCartél import texto_abajo # Módulo de cartél de escenas
+        bajarCartél()
+        llenarRótulos(mensajes[app.valoresDeTexto_up], texto_arriba)
+        llenarRótulos(mensajes[app.valoresDeTexto_mid], texto_en_medio)
+        llenarRótulos(mensajes[app.valoresDeTexto_down], texto_abajo)    
 
     # Escena 1
-    if app.estado == 'En escena de ciudad':
+    if app.estado == 'En escena 1 - Ciudad':
         moverCarro(carro_1, 440, 10, -700) # Mover carro azul
         moverCarro(carro_2, 540, 15, -600) # Mover carro violeta
         moverCarro(carro_3, 640, 5, -500) # Mover carro gris
