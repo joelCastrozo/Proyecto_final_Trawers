@@ -87,9 +87,9 @@ mensajes = ['La contaminación es la presencia de sustancias',
             'Otra puede ser, recoger los desechos y basura que se',
             'lanzan a diario en los ríos y mares, para promover la',
             'protección de los océanos y de la vida marina.',
-            'Imagen de la recolección',
-            'de la basura de los ríos.',
-            '¡¡Tú puedes hacerlo!',
+            'Materialización de una recolección de la',
+            'basura que invadía los ríos.',
+            '¡¡Tú también puedes ayudar a promover esto!!',
             'Utilizar los recursos de tiendas sostenibles puede',
             'ser una buena opción, junto al uso de energía solar',
             'puede mejorar el uso excesivo de energía y químicos.',
@@ -98,8 +98,7 @@ mensajes = ['La contaminación es la presencia de sustancias',
             'la re-plantación de arbóles cuando sean talados.',
             'Crear campañas de reciclaje para promover las tres r:',
             '¡Reduce, Recicla, Reutiliza!',
-            'Para disminuir el porcentaje de desechos en la Tierra.'        
-            ]
+            'Para disminuir el porcentaje de desechos en la Tierra.']
 
 def vaciarRótulo():
     texto_arriba.valor = ''

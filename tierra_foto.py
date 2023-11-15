@@ -1,12 +1,12 @@
 from cmu_graphics import *
 app.fondo = gradient(rgb(20,20,20), 'negro')
 cuenta = 0
-cuentaDeEstrellas = 70
+cuentaDeEstrellas = 120
 
 while cuenta < cuentaDeEstrellas:
-    estrella_x = rangoAleatorio(1, 400)
-    estrella_y = rangoAleatorio(1, 400)
-    Circulo(estrella_x, estrella_y, 1, fill='white')
+    estrella_x = randrange(1, 400)
+    estrella_y = randrange(1, 400)
+    Circle(estrella_x, estrella_y, 1, fill='white')
     cuenta += 1
 
 tierra = Group(
